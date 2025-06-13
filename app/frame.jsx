@@ -11,7 +11,6 @@ const Iphone13MiniFrame = ({ children }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '100%',
         backgroundColor: '#fff',
         padding: 2,
       }}
@@ -30,7 +29,6 @@ const Iphone13MiniFrame = ({ children }) => {
           border: '8px solid #000',
         }}
       >
-        {/* Notch (visual only) */}
         <Box
           sx={{
             position: 'absolute',
@@ -46,7 +44,6 @@ const Iphone13MiniFrame = ({ children }) => {
           }}
         />
 
-        {/* Status Bar */}
         <Box
           sx={{
             height: 44,
@@ -68,21 +65,20 @@ const Iphone13MiniFrame = ({ children }) => {
           </Box>
         </Box>
 
-        {/* App Content */}
         <Box
           sx={{
             flex: 1,
             backgroundColor: '#fff',
-            overflowY: 'hidden',
+            overflowY: 'clip',
+            height: "100%",
             position: 'relative',
-            paddingBottom: 30,
+            paddingBottom: 8,
             zIndex: 1,
           }}
         >
           {children}
         </Box>
 
-        {/* Home Indicator */}
         <Box
           sx={{
             height: 34,
