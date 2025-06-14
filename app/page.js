@@ -154,7 +154,7 @@ const App = () => {
 				>
 					Already have an account?{" "}
 					<Link
-						href=""
+						href="/login"
 						underline="none"
 						component={NextLink}
 					>
