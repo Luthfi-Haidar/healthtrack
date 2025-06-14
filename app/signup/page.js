@@ -95,7 +95,7 @@ const Signup = () => {
 				sx={{
 					position: "relative",
 					overflow: "hidden",
-					height: "100%",
+					height: "calc(100% - 42px)",
 					width: "100%",
 				}}
 			>

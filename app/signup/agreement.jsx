@@ -148,7 +148,7 @@ const AgreementPage = ({ onNext, inputs, setInputs }) => {
 										fontSize: 13,
 									}}
 								>
-									Yes, DailyTrack can process my health data to help me manage
+									Yes, HealthTrack can process my health data to help me manage
 									my my health with recommendations, information and care
 									options, as described in the{" "}
 									<Link
