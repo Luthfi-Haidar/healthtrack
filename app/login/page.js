@@ -11,9 +11,11 @@ import {
 	Collapse,
 	FormHelperText,
 	Button,
+	IconButton,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Iphone13MiniFrame from "../frame";
+import { ArrowCircleLeftOutlined } from "@mui/icons-material";
 
 const LoginForm = () => {
 	const router = useRouter();
@@ -63,6 +65,11 @@ const LoginForm = () => {
 
 	return (
 		<Iphone13MiniFrame>
+			<Box sx={{ marginX: 1.5 }}>
+				<IconButton onClick={() => router.push("/")}>
+					<ArrowCircleLeftOutlined />
+				</IconButton>
+			</Box>
 			<Box>
 				<Container>
 					<Typography sx={{ fontWeight: "medium", fontSize: 24 }}>

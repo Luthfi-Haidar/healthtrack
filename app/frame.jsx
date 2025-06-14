@@ -69,7 +69,7 @@ const Iphone13MiniFrame = ({ children }) => {
 					sx={{
 						flex: 1,
 						backgroundColor: "#fff",
-						overflowY: "auto",
+						overflowY: "hidden",
 						height: "100%",
 						position: "relative",
 						zIndex: 1,

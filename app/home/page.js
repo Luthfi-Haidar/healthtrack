@@ -45,7 +45,16 @@ const Home = () => {
 					</Toolbar>
 				</Container>
 			</AppBar>
-			<Box sx={{ flex: 1, overflow: "auto" }}>{tabs[tabIndex]}</Box>
+			<Box
+				sx={{
+					maxHeight: "calc(100% - 120px)",
+					overflowY: "auto",
+					display: "flex",
+					flex: 1,
+				}}
+			>
+				{tabs[tabIndex]}
+			</Box>
 
 			<Box sx={{ width: "100%", position: "absolute", bottom: 0 }}>
 				<BottomNavigation
