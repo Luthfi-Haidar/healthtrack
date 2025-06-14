@@ -8,16 +8,47 @@ import AgreementPage from "./agreement";
 import AboutYou from "./about_you";
 import { useRouter } from "next/navigation";
 import AboutYouDetail from "./about_you_detail";
+import AccountCreation from "./account_creation";
+import SettingUp from "./settingup";
 
 const Signup = () => {
+	const [inputs, setInputs] = React.useState({
+		terms: false,
+		reminder: false,
+		privacy: false,
+		name: "",
+		dob: "",
+		healthGoal: "",
+		gender: "other",
+		height: 160,
+		weight: 50,
+		email: "",
+		password: "",
+		phoneNumber: "",
+	});
+
+	React.useEffect(() => {
+		const storedData = localStorage.getItem("saved_data");
+		if (storedData) {
+			setInputs(JSON.parse(storedData));
+		}
+	}, []);
+
+	React.useEffect(() => {
+		localStorage.setItem("saved_data", JSON.stringify(inputs));
+	}, [inputs]);
+
 	const router = useRouter();
 	const [step, setStep] = React.useState(0);
+	const [prevIsNext, setPrevIsNext] = React.useState(false);
 
 	const handleNext = () => {
+		setPrevIsNext(true);
 		setStep((prev) => Math.min(prev + 1, steps.length - 1));
 	};
 
 	const handlePrev = () => {
+		setPrevIsNext(false);
 		setStep((prev) => {
 			if (prev - 1 < 0) {
 				router.push("/");
@@ -29,9 +60,27 @@ const Signup = () => {
 	};
 
 	const steps = [
-		<AgreementPage onNext={handleNext} />,
-		<AboutYou onNext={handleNext} />,
-		<AboutYouDetail />,
+		<AgreementPage
+			onNext={handleNext}
+			inputs={inputs}
+			setInputs={setInputs}
+		/>,
+		<AboutYou
+			onNext={handleNext}
+			inputs={inputs}
+			setInputs={setInputs}
+		/>,
+		<AboutYouDetail
+			onNext={handleNext}
+			inputs={inputs}
+			setInputs={setInputs}
+		/>,
+		<AccountCreation
+			onNext={handleNext}
+			inputs={inputs}
+			setInputs={setInputs}
+		/>,
+		<SettingUp onReady={() => router.push("/home")} />,
 	];
 
 	return (
@@ -42,7 +91,6 @@ const Signup = () => {
 				</IconButton>
 			</Box>
 
-			{/* Slide transition for steps */}
 			<Box
 				sx={{
 					position: "relative",
@@ -54,7 +102,15 @@ const Signup = () => {
 				{steps.map((content, index) => (
 					<Slide
 						key={index}
-						direction={index < step ? "right" : "left"}
+						direction={
+							prevIsNext
+								? index < step
+									? "right"
+									: "left"
+								: index > step
+								? "left"
+								: "right"
+						}
 						in={index === step}
 						timeout={400}
 						mountOnEnter

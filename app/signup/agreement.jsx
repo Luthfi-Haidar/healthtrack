@@ -16,21 +16,15 @@ import {
 import { Link as NextLink } from "next/link";
 import React from "react";
 
-const AgreementPage = ({ onNext }) => {
-	const [checked, setCheckedState] = React.useState({
-		terms: false,
-		reminder: false,
-		privacy: false,
-	});
-
+const AgreementPage = ({ onNext, inputs, setInputs }) => {
 	const handleCheckedChange = (event) => {
-		setCheckedState({
-			...checked,
+		setInputs({
+			...inputs,
 			[event.target.name]: event.target.checked,
 		});
 	};
 
-	const { terms, reminder, privacy } = checked;
+	const { terms, reminder, privacy } = inputs;
 	// length of the filter will only be 3 if all three checklist are checked
 	const error = [terms, reminder, privacy].filter((v) => v).length !== 3;
 

@@ -14,108 +14,111 @@ import {
 } from "@mui/material";
 import React from "react";
 
-const AboutYou = ({ onNext }) => {
-	const [inputs, setInputs] = React.useState({
-		name: "",
-		dob: new Date("invalid date"),
-		healthGoal: "",
+const AboutYou = ({ onNext, inputs, setInputs }) => {
+	const [touched, setTouched] = React.useState({
+		name: false,
+		dob: false,
+		healthGoal: false,
 	});
 
 	const handleInputChanged = (event) => {
-		setInputs({
-			...inputs,
-			[event.target.name]: event.target.value,
-		});
+		const { name, value } = event.target;
+		setInputs({ ...inputs, [name]: value });
+	};
+
+	const handleBlur = (event) => {
+		const { name } = event.target;
+		setTouched({ ...touched, [name]: true });
 	};
 
 	const { name, dob, healthGoal } = inputs;
-	const validateName = name === "" || /\d/.test(name);
-	const validateDob =
-		isNaN(new Date(dob).getTime()) ||
-		Math.abs(new Date().getFullYear() - new Date(dob).getFullYear()) < 16 ||
-		Math.abs(new Date().getFullYear() - new Date(dob).getFullYear()) > 100;
-	const validateHealthGoal = healthGoal === "";
-	const error = validateName || validateDob || validateHealthGoal;
+
+	const nameEmpty = name.trim() === "";
+	const nameHasNumber = /\d/.test(name);
+	const nameNotStartsWithCapital =
+		!nameEmpty && name[0] === name[0].toLowerCase();
+	const nameError = nameEmpty || nameHasNumber || nameNotStartsWithCapital;
+
+	const parsedDob = new Date(dob);
+	const dobInvalid = isNaN(parsedDob.getTime());
+	const dobAge = new Date().getFullYear() - parsedDob.getFullYear();
+	const dobOutOfRange = dobAge < 16 || dobAge > 100;
+	const dobError = dobInvalid || dobOutOfRange;
+
+	const healthGoalEmpty = healthGoal === "";
+
+	const error = nameError || dobError || healthGoalEmpty;
 
 	return (
 		<Box>
 			<Container>
-				<Typography
-					sx={{
-						fontWeight: "medium",
-						fontSize: 24,
-					}}
-				>
+				<Typography sx={{ fontWeight: "medium", fontSize: 24 }}>
 					Ok, tell us about yourself
 				</Typography>
-				<Typography
-					sx={{
-						fontWeight: "light",
-						fontSize: 13,
-						paddingY: 2,
-					}}
-				>
+				<Typography sx={{ fontWeight: "light", fontSize: 13, paddingY: 2 }}>
 					That way, we can make our app all about you
 				</Typography>
+
 				<FormGroup>
 					<FormControl
-						error={error}
 						fullWidth
+						error={touched.name && error}
 					>
 						<TextField
 							required
 							name="name"
 							label="Your name"
 							value={name}
-							error={validateName}
+							error={touched.name && nameError}
 							onChange={handleInputChanged}
-							sx={{
-								height: 55,
-							}}
-							slotProps={{
-								inputLabel: {
-									shrink: true,
-								},
-							}}
+							onBlur={handleBlur}
+							slotProps={{ inputLabel: { shrink: true } }}
+							sx={{ height: 55 }}
 						/>
+						<Collapse in={touched.name && nameEmpty}>
+							<FormHelperText>Your name cannot be empty.</FormHelperText>
+						</Collapse>
+						<Collapse in={touched.name && nameHasNumber}>
+							<FormHelperText>Your name cannot contain numbers.</FormHelperText>
+						</Collapse>
 						<Collapse
-							in={validateName}
-							sx={{
-								paddingY: 2,
-							}}
+							in={touched.name && !nameHasNumber && nameNotStartsWithCapital}
 						>
 							<FormHelperText>
-								Your name cannot be empty nor contains any number.
+								Your name must starts with a capital letter.
 							</FormHelperText>
 						</Collapse>
+					</FormControl>
+
+					<FormControl
+						fullWidth
+						error={touched.dob && error}
+						sx={{ marginTop: 2 }}
+					>
 						<TextField
 							name="dob"
 							label="Date of Birth"
 							type="date"
 							value={dob}
+							error={touched.dob && dobError}
 							onChange={handleInputChanged}
-							error={validateDob}
-							slotProps={{
-								inputLabel: {
-									shrink: true,
-								},
-							}}
+							onBlur={handleBlur}
+							slotProps={{ inputLabel: { shrink: true } }}
 						/>
-						<Collapse
-							in={validateDob}
-							sx={{
-								paddingY: 2,
-							}}
-						>
+						<Collapse in={touched.dob && dobInvalid}>
+							<FormHelperText>Invalid date.</FormHelperText>
+						</Collapse>
+						<Collapse in={touched.dob && !dobInvalid && dobOutOfRange}>
 							<FormHelperText>
-								This app is only suitable for people between the ages of 16 to
-								100.
+								You must be between 16 and 100 years old to use this app.
 							</FormHelperText>
 						</Collapse>
 					</FormControl>
+
 					<FormControl
 						fullWidth
-						error={validateHealthGoal}
+						error={touched.healthGoal && healthGoalEmpty}
+						sx={{ marginTop: 2 }}
 					>
 						<InputLabel id="health-goal-label">Main health goal</InputLabel>
 						<Select
@@ -124,31 +127,23 @@ const AboutYou = ({ onNext }) => {
 							name="healthGoal"
 							value={healthGoal}
 							onChange={handleInputChanged}
+							onBlur={handleBlur}
 							label="Main health goal"
-							error={validateHealthGoal}
 						>
+							<MenuItem value="">Select...</MenuItem>
 							<MenuItem value="Lose weight">Lose weight</MenuItem>
 							<MenuItem value="Maintain weight">Maintain weight</MenuItem>
 							<MenuItem value="Sleep better">Sleep better</MenuItem>
 							<MenuItem value="General wellbeing">General wellbeing</MenuItem>
 						</Select>
-						<Collapse
-							in={validateHealthGoal}
-							sx={{
-								paddingY: 2,
-							}}
-						>
-							<FormHelperText>Please select a main goal.</FormHelperText>
+						<Collapse in={touched.healthGoal && healthGoalEmpty}>
+							<FormHelperText>Please select a health goal.</FormHelperText>
 						</Collapse>
 					</FormControl>
 				</FormGroup>
 			</Container>
-			<Container
-				sx={{
-					position: "absolute",
-					bottom: 2,
-				}}
-			>
+
+			<Container sx={{ position: "absolute", bottom: 2 }}>
 				<Button
 					fullWidth
 					disabled={error}
@@ -162,11 +157,7 @@ const AboutYou = ({ onNext }) => {
 					}}
 				>
 					<Typography
-						sx={{
-							fontSize: "16px",
-							fontWeight: "500",
-							paddingY: 0.5,
-						}}
+						sx={{ fontSize: "16px", fontWeight: "500", paddingY: 0.5 }}
 					>
 						Continue
 					</Typography>
